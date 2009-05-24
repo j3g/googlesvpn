@@ -11,23 +11,26 @@ def test(request):
 def api(request):
   response = HttpResponse()
 
-  method = request.GET['m']
+  try:
+    method = request['m']
+  except:
+    method = 'None'
 
   if(method == 'store'):
     user = SocialUser()
-    user.uid = cgi.escape(request.GET['uid'])
-    user.fingerprint = cgi.escape(request.GET['fpr'])
+    user.uid = cgi.escape(request['uid'])
+    user.fingerprint = cgi.escape(request['fpr'])
     user.put()
-    response.write('Fingerprint %s add' % user.fingerprint)
+    response.write('Added %s successfully' % user.fingerprint)
 
   elif(method == 'getfriends'):
     users = db.GqlQuery("SELECT * FROM SocialUser ORDER BY date")
     for user in users:
-      response.write(user.uid)
+      response.write(user.uid + '\n')
   elif(method == 'getfprs'):
     users = db.GqlQuery("SELECT * FROM SocialUser ORDER BY date")
     for user in users:
-      response.write(user.fingerprint)
+      response.write(user.fingerprint + '\n')
   else:
     response.write('Call %s not support' % method)
 
