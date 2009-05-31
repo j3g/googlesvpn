@@ -1,4 +1,3 @@
-import cgi
 
 from django.http import HttpResponse, HttpResponseRedirect
 from models import SocialUser
@@ -18,19 +17,20 @@ def api(request):
 
   if(method == 'store'):
     user = SocialUser()
-    user.uid = cgi.escape(request['uid'])
-    user.fingerprint = cgi.escape(request['fpr'])
+    user.uid = request['uid']
+    user.fingerprint = request['fpr']
     user.put()
     response.write('Added %s successfully' % user.fingerprint)
 
   elif(method == 'getfriends'):
-    users = db.GqlQuery("SELECT * FROM SocialUser ORDER BY date")
+    users = SocialUser.all()
     for user in users:
-      response.write(user.uid + '\n')
+      response.write(user.uid + ',')
   elif(method == 'getfprs'):
-    users = db.GqlQuery("SELECT * FROM SocialUser ORDER BY date")
+    list = request['uids']
+    users = SocialUser.gql("WHERE uid = :author", author=list)
     for user in users:
-      response.write(user.fingerprint + '\n')
+      response.write(user.fingerprint + ',')
   else:
     response.write('Call %s not support' % method)
 
