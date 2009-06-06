@@ -27,8 +27,7 @@ def api(request):
     for user in users:
       response.write(user.uid + ',')
   elif(method == 'getfprs'):
-    list = request['uids']
-    users = SocialUser.gql("WHERE uid = :author", author=list)
+    users = SocialUser.all()
     for user in users:
       response.write(user.fingerprint + ',')
   else:
